@@ -20,7 +20,7 @@ public class MainTemplate {
 
             int sum = 0;
             for (int num : arr) {
-                sum += sum;
+                num += sum;
             }
 
             System.out.println("Sum:" + sum);
