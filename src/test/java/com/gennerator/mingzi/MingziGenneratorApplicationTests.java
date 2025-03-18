@@ -1,4 +1,4 @@
-package com.genneratoor.mingzi;
+package com.gennerator.mingzi;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
