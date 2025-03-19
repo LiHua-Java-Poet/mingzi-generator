@@ -1,0 +1,81 @@
+package ${package}.service.impl;
+
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.minzi.common.core.query.R;
+import com.minzi.common.tools.EntityAct;
+import com.minzi.common.utils.DateUtils;
+import com.minzi.common.utils.EntityUtils;
+import ${package}.common.UserContext;
+import ${package}.dao.${className}Dao;
+import ${package}.model.entity.${className}Entity;
+import ${package}.model.to.${classname}.${className}InfoTo;
+import ${package}.model.to.${classname}.${className}ListTo;
+import ${package}.model.vo.${classname}.${className}SaveVo;
+import ${package}.model.vo.${classname}.${className}UpdateVo;
+
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+@Service
+public class ${className}ServiceImpl extends ServiceImpl<${className}Dao,${className}Entity> implements ${className}Service{
+
+    @Resource
+    private ${className}Service ${classname}Service;
+
+    @Resource
+    private EntityAct entityAct;
+
+    @Override
+    public Wrapper<${className}Entity> getListCondition(Map<String, Object> params) {
+        LambdaQueryWrapper<${className}Entity> wrapper = new LambdaQueryWrapper<>();
+
+        return wrapper;
+    }
+
+    @Override
+    public List<${className}ListTo> formatList(List<${className}Entity> list) {
+        return list.stream().map(item -> {
+            ${className}ListTo to = new ${className}ListTo();
+            EntityUtils.copySameFields(item, to);
+            return to;
+        }).collect(Collectors.toList());
+    }
+
+    @Override
+    public void add(${className}SaveVo ${classname}SaveVo) {
+        ${className}Entity entity = new ${className}Entity();
+        EntityUtils.copySameFields(${classname}SaveVo, entity);
+        ${classname}Service.save(entity);
+    }
+
+    @Override
+    public Wrapper<${className}Entity> getOneCondition(Map<String, Object> params) {
+        LambdaQueryWrapper<${className}Entity> wrapper = new LambdaQueryWrapper<>();
+
+        wrapper.last("limit 1");
+        return wrapper;
+    }
+
+    @Override
+    public ${className}InfoTo formatOne(${className}Entity entity) {
+        ${className}InfoTo to = new ${className}InfoTo();
+        EntityUtils.copySameFields(entity, to);
+        return to;
+    }
+
+    @Override
+    public void update(${className}UpdateVo UpdateVo) {
+        ${className}Entity entity = ${classname}Service.getById(UpdateVo.getId());
+        EntityUtils.copySameFields(UpdateVo, entity);
+        ${classname}Service.updateById(entity);
+    }
+
+    @Override
+    public void delete(String[] ids) {
+        ${classname}Service.remove(new LambdaQueryWrapper<${className}Entity>().in(${className}Entity::getId,ids));
+    }
+}

@@ -7,12 +7,6 @@ import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.StrUtil;
 import com.gennerator.mingzi.entity.ColumnEntity;
 import org.apache.commons.configuration.Configuration;
-//import org.apache.commons.configuration.ConfigurationException;
-//import org.apache.commons.configuration.PropertiesConfiguration;
-//import org.apache.commons.lang.StringUtils;
-//import org.apache.commons.lang.WordUtils;
-//import org.apache.velocity.Template;
-//import org.apache.velocity.VelocityContext;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 
@@ -38,6 +32,9 @@ public class GenUtils {
         templates.add("template/ListTo.java.vm");
         templates.add("template/SaveVo.java.vm");
         templates.add("template/UpdateVo.java.vm");
+        templates.add("template/Service.java.vm");
+        templates.add("template/ServiceImpl.java.vm");
+        templates.add("template/Dao.java.vm");
         return templates;
     }
 
@@ -130,14 +127,6 @@ public class GenUtils {
             return packagePath + "service" + File.separator + "impl" + File.separator + className + "ServiceImpl.java";
         }
 
-        if (template.contains("Controller.java.vm")) {
-            return packagePath + "controller" + File.separator + className + "Controller.java";
-        }
-
-        if (template.contains("Dao.xml.vm")) {
-            return "main" + File.separator + "resources" + File.separator + "mapper" + File.separator + moduleName + File.separator + className + "Dao.xml";
-        }
-
         if (template.contains("InfoTo.java.vm")) {
             return packagePath + "model" + File.separator + "to" + File.separator + tableEntity.getClassname() + File.separator + className + "InfoTo.java";
         }
@@ -152,31 +141,6 @@ public class GenUtils {
 
         if (template.contains("UpdateVo.java.vm")) {
             return packagePath + "model" + File.separator + "vo" + File.separator + tableEntity.getClassname() + File.separator + className + "UpdateVo.java";
-        }
-
-
-        if (template.contains("index.vue.vm")) {
-            return "vue" + File.separator + "views" + File.separator + moduleName + File.separator + className.toLowerCase() + ".vue";
-        }
-
-        if (template.contains("add-or-update.vue.vm")) {
-            return "vue" + File.separator + "views" + File.separator + moduleName + File.separator + className.toLowerCase() + "-add-or-update.vue";
-        }
-
-        if (template.contains("mysql.vm")) {
-            return className.toLowerCase() + ".mysql.sql";
-        }
-
-        if (template.contains("oracle.vm")) {
-            return className.toLowerCase() + ".oracle.sql";
-        }
-
-        if (template.contains("sqlserver.vm")) {
-            return className.toLowerCase() + ".sqlserver.sql";
-        }
-
-        if (template.contains("postgresql.vm")) {
-            return className.toLowerCase() + ".postgresql.sql";
         }
 
         return null;

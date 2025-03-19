@@ -1,0 +1,12 @@
+package ${package}.service;
+
+import com.minzi.common.service.BaseService;
+import ${package}.model.entity.${className}Entity;
+import ${package}.model.to.${classname}.${className}InfoTo;
+import ${package}.model.to.${classname}.${className}ListTo;
+import ${package}.model.vo.${classname}.${className}SaveVo;
+import ${package}.model.vo.${classname}.${className}UpdateVo;
+
+
+public interface ${className}Service extends BaseService<${className}Entity,${className}ListTo,${className}InfoTo, ${className}SaveVo, ${className}UpdateVo> {
+}
