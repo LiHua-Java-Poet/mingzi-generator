@@ -1,0 +1,53 @@
+package ${package}.controller;
+
+
+import com.minzi.common.core.query.PageUtils;
+import com.minzi.common.core.query.R;
+import ${package}.model.to.plan.${className}InfoTo;
+import ${package}.model.to.plan.${className}ListTo;
+import ${package}.model.vo.plan.${className}SaveVo;
+import ${package}.model.vo.plan.${className}UpdateVo;
+import ${package}.service.${className}Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/${moduleName}/${classname}")
+public class ${className}Controller {
+
+    @Resource
+    private ${className}Service ${classname}Service;
+
+
+    @GetMapping("/list")
+    public R list(@RequestParam Map<String, Object> params) {
+        if (StringUtils.isEmpty(params.get("page"))) {
+            List<${className}ListTo> all = ${classname}Service.all(params);
+            return R.ok().setData(all);
+        }
+        PageUtils pageUtils = planService.queryPage(params);
+        return R.ok().setData(pageUtils);
+    }
+
+    @GetMapping("/info")
+    public R info(@RequestParam Long id) {
+        ${className}InfoTo one = ${classname}Service.getOne(id);
+        return R.ok().setData(one);
+    }
+
+    @PostMapping("/save")
+    public R save(@RequestBody ${className}SaveVo vo) {
+        ${classname}Service.add(vo);
+        return R.ok();
+    }
+
+    @PostMapping("/update")
+    public R update(@RequestBody ${className}UpdateVo vo) {
+        ${classname}Service.update(vo);
+        return R.ok();
+    }
+}

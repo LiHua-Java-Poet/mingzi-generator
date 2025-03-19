@@ -1,8 +1,5 @@
 package com.gennerator.mingzi.utils;
 
-//import cn.hutool.core.io.IoUtil;
-//import cn.hutool.core.util.StrUtil;
-
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.StrUtil;
 import com.gennerator.mingzi.entity.ColumnEntity;
@@ -35,6 +32,7 @@ public class GenUtils {
         templates.add("template/Service.java.vm");
         templates.add("template/ServiceImpl.java.vm");
         templates.add("template/Dao.java.vm");
+        templates.add("template/Controller.java.vm");
         return templates;
     }
 
@@ -113,6 +111,10 @@ public class GenUtils {
 
         if (template.contains("Entity.java.vm")) {
             return packagePath + "model" + File.separator + "entity" + File.separator + className + "Entity.java";
+        }
+
+        if (template.contains("Controller.java.vm")) {
+            return packagePath + "controller" + File.separator + className + "Controller.java";
         }
 
         if (template.contains("Dao.java.vm")) {
