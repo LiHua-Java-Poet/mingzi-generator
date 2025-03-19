@@ -7,9 +7,7 @@ import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -23,15 +21,15 @@ public class SysGeneratorController {
     @Resource
     private SysGeneratorService service;
 
-    @GetMapping("/sayHi")
-    public ResponseEntity<Object> sayHi(@RequestParam(value = "name")String name){
-        List<Map<String, Object>> demo = service.tableList();
-        return ResponseEntity.ok(demo);
+    @GetMapping("/tableList")
+    public ResponseEntity<Object> tableList(Integer page,Integer pageSize){
+        List<Map<String, Object>> tableList = service.tableList();
+        return ResponseEntity.ok(tableList);
     }
 
-    @GetMapping("/generatorCode")
-    public void generatorCode(HttpServletResponse response) throws IOException {
-        byte[] data = service.generatorCode(Arrays.asList("plan", "task"));
+    @PostMapping("/generatorCode")
+    public void generatorCode(HttpServletResponse response,@RequestBody List<String> tableList) throws IOException {
+        byte[] data = service.generatorCode(tableList);
 
         response.reset();
         response.setHeader("Content-Disposition", "attachment; filename=\"min.zip\"");

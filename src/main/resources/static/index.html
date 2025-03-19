@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>代码生成管理</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      display: flex;
+      min-height: 100vh;
+      background: #f0f2f5;
+    }
+
+    /* 左侧导航 */
+    .nav-sidebar {
+      width: 200px;
+      background: #001529;
+      padding: 20px 0;
+      color: white;
+      box-shadow: 2px 0 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-title {
+      padding: 0 20px;
+      font-size: 18px;
+      margin-bottom: 30px;
+      color: #1890ff;
+    }
+
+    .nav-menu {
+      list-style: none;
+    }
+
+    .nav-item {
+      padding: 12px 20px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .nav-item:hover {
+      background: #1890ff;
+    }
+
+    .nav-item.active {
+      background: #1890ff;
+      border-left: 4px solid #fff;
+    }
+
+    /* 右侧内容 */
+    .content-area {
+      flex: 1;
+      padding: 24px;
+    }
+
+    /* 代码列表 */
+    .code-list {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+
+    .list-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+
+    th {
+      background: #fafafa;
+      color: rgba(0, 0, 0, 0.85);
+    }
+
+    tr:hover {
+      background: #f5f5f5;
+    }
+
+    /* 分页 */
+    .pagination {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .page-item {
+      padding: 6px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .page-item:hover {
+      border-color: #1890ff;
+      color: #1890ff;
+    }
+
+    .page-item.active {
+      background: #1890ff;
+      color: white;
+      border-color: #1890ff;
+    }
+    /* 复选框列 */
+    .select-column {
+      width: 50px;
+    }
+
+    /* 分页设置 */
+    .page-size-selector {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .page-size-selector select {
+      padding: 6px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    /* 选中行高亮 */
+    tr.selected {
+      background-color: #e6f7ff !important;
+    }
+  </style>
+</head>
+<body>
+<!-- 左侧导航 -->
+<nav class="nav-sidebar">
+  <div class="nav-title">开发管理</div>
+  <ul class="nav-menu">
+    <li class="nav-item active">代码生成</li>
+  </ul>
+</nav>
+
+<!-- 右侧内容 -->
+<section class="content-area">
+  <div class="code-list">
+    <!-- 分页设置 -->
+    <div class="page-size-selector">
+      <span>每页显示：</span>
+      <select id="pageSize" onchange="changePageSize()">
+        <option value="10">10</option>
+        <option value="20">20</option>
+        <option value="50">50</option>
+      </select>
+    </div>
+
+    <!-- 下载按钮 -->
+    <button onclick="handleDownload()" style="margin-bottom: 20px; padding: 8px 16px; background: #1890ff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+      下载选中代码
+    </button>
+
+    <table>
+      <thead>
+      <tr>
+        <th class="select-column">
+          <input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)">
+        </th>
+        <th>表名</th>
+        <th>备注</th>
+        <th>更新时间</th>
+      </tr>
+      </thead>
+      <tbody id="tableBody">
+      <!-- 数据行将通过JavaScript动态生成 -->
+      </tbody>
+    </table>
+
+    <!-- 分页控件 -->
+    <div class="pagination" id="pagination"></div>
+  </div>
+</section>
+</body>
+<script>
+  // 状态管理
+  let state = {
+    currentPage: 1,
+    pageSize: 10,
+    selectedNames: new Set(),
+    total: 0 // 总条数
+  }
+
+  // 初始化
+  function init() {
+    fetchTableData()
+  }
+
+  // 请求表格数据
+  async function fetchTableData() {
+    try {
+      const url = `/sys/generator/tableList?page=${state.currentPage}&pageSize=${state.pageSize}`
+      const response = await fetch(url)
+      const result = await response.json()
+
+      if (response.ok) {
+        console.info(result)
+        state.total = result.total // 更新总条数
+        renderTable(result) // 渲染表格
+        renderPagination() // 渲染分页
+      } else {
+        console.error('请求失败:', result)
+      }
+    } catch (error) {
+      console.error('请求异常:', error)
+    }
+  }
+
+  async function downloadCode(tableList) {
+    try {
+      const response = await fetch('/sys/generator/generatorCode', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(tableList) // 将 tableList 作为 JSON 传递
+      });
+
+      if (response.ok) {
+        // 处理文件下载
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'min.zip';
+        a.click();
+        window.URL.revokeObjectURL(url);
+      } else {
+        console.error('下载失败:', response.statusText);
+      }
+    } catch (error) {
+      console.error('请求异常:', error);
+    }
+  }
+
+  // 渲染表格
+  function renderTable(data) {
+    const tbody = document.getElementById('tableBody');
+    tbody.innerHTML = data.map(item => `
+    <tr class="${state.selectedNames.has(item.Name) ? 'selected' : ''}">
+      <td>
+        <input
+          type="checkbox"
+          ${state.selectedNames.has(item.Name) ? 'checked' : ''}
+          onchange="toggleSelect('${item.Name}', this)"
+          data-name="${item.Name}"
+        />
+      </td>
+      <td>${item.Name || '无'}</td>
+      <td>${item.Comment || '无'}</td>
+      <td>${item.Update_time || '无'}</td>
+    </tr>
+  `).join('');
+  }
+
+  // 分页逻辑
+  function renderPagination() {
+    const totalPages = Math.ceil(state.total / state.pageSize)
+    const pagination = document.getElementById('pagination')
+
+    let html = `
+    <div
+      class="page-item ${state.currentPage === 1 ? 'disabled' : ''}"
+      onclick="changePage(${state.currentPage - 1})"
+    >
+      上一页
+    </div>
+  `
+
+    for (let i = 1; i <= totalPages; i++) {
+      html += `
+      <div
+        class="page-item ${i === state.currentPage ? 'active' : ''}"
+        onclick="changePage(${i})"
+      >
+        ${i}
+      </div>
+    `
+    }
+
+    html += `
+    <div
+      class="page-item ${state.currentPage === totalPages ? 'disabled' : ''}"
+      onclick="changePage(${state.currentPage + 1})"
+    >
+      下一页
+    </div>
+  `
+
+    pagination.innerHTML = html
+  }
+
+  // 事件处理
+  function toggleSelect(name, checkbox) {
+    if (checkbox.checked) {
+      state.selectedNames.add(name); // 存储 Name
+    } else {
+      state.selectedNames.delete(name); // 移除 Name
+    }
+    checkbox.closest('tr').classList.toggle('selected');
+    updateSelectAllState();
+  }
+
+  function toggleSelectAll(checkbox) {
+    const checkboxes = document.querySelectorAll('#tableBody input[type="checkbox"]');
+    checkboxes.forEach(cb => {
+      cb.checked = checkbox.checked; // 设置复选框的选中状态
+      const name = cb.getAttribute('data-name'); // 获取 data-name 属性（即 Name）
+      console.info(name)
+
+      if (checkbox.checked) {
+        state.selectedNames.add(name); // 将 Name 添加到选中集合
+      } else {
+        state.selectedNames.delete(name); // 将 Name 从选中集合移除
+      }
+      cb.closest('tr').classList.toggle('selected', checkbox.checked); // 切换行的选中样式
+    });
+  }
+
+  function updateSelectAllState() {
+    const checkboxes = document.querySelectorAll('#tableBody input[type="checkbox"]')
+    const selectAll = document.getElementById('selectAll')
+    selectAll.checked = checkboxes.length > 0 &&
+            Array.from(checkboxes).every(cb => cb.checked)
+  }
+
+  function changePage(page) {
+    if (page < 1 || page > Math.ceil(state.total / state.pageSize)) return
+    state.currentPage = page
+    fetchTableData()
+  }
+
+  function changePageSize() {
+    state.pageSize = parseInt(document.getElementById('pageSize').value)
+    state.currentPage = 1
+    fetchTableData()
+  }
+
+  // 处理下载按钮点击事件
+  function handleDownload() {
+    if (state.selectedNames.size === 0) {
+      alert('请至少选择一行数据！');
+      return;
+    }
+    // 获取选中的 Name 列表
+    const selectedNames = Array.from(state.selectedNames);
+
+    // 调用下载函数
+    downloadCode(selectedNames);
+  }
+
+  // 初始化
+  init()
+</script>
+</html>
