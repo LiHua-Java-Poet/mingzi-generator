@@ -1,7 +1,9 @@
-package ${package}.model.vo.${classname}
+package ${package}.model.vo.${classname};
 
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
+
+import java.io.Serializable;
 
 /**
  * ${comments}

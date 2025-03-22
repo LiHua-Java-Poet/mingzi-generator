@@ -1,7 +1,9 @@
-package ${package}.model.to.${classname}
+package ${package}.model.to.${classname};
 
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
+
+import java.io.Serializable;
 
 /**
  * ${comments}

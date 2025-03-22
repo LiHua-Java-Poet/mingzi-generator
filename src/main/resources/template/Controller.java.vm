@@ -3,10 +3,10 @@ package ${package}.controller;
 
 import com.minzi.common.core.query.PageUtils;
 import com.minzi.common.core.query.R;
-import ${package}.model.to.plan.${className}InfoTo;
-import ${package}.model.to.plan.${className}ListTo;
-import ${package}.model.vo.plan.${className}SaveVo;
-import ${package}.model.vo.plan.${className}UpdateVo;
+import ${package}.model.to.${classname}.${className}InfoTo;
+import ${package}.model.to.${classname}.${className}ListTo;
+import ${package}.model.vo.${classname}.${className}SaveVo;
+import ${package}.model.vo.${classname}.${className}UpdateVo;
 import ${package}.service.${className}Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +29,7 @@ public class ${className}Controller {
             List<${className}ListTo> all = ${classname}Service.all(params);
             return R.ok().setData(all);
         }
-        PageUtils pageUtils = planService.queryPage(params);
+        PageUtils pageUtils = ${classname}Service.queryPage(params);
         return R.ok().setData(pageUtils);
     }
 

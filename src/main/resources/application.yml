@@ -10,6 +10,6 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://112.74.191.203:3306/tip?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
-    username: root
-    password: abcd+7523-
+    username: zm
+    password: 123456
 
