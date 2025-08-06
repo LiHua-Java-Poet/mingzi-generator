@@ -20,5 +20,6 @@ public class ${className}ListTo implements Serializable {
      * $column.comments
      */
 	private $column.attrType $column.attrNameSmall;
+
 #end
 }

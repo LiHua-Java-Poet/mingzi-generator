@@ -20,5 +20,6 @@ public class ${className}UpdateVo implements Serializable {
      * $column.comments
      */
 	private $column.attrType $column.attrNameSmall;
+
 #end
 }

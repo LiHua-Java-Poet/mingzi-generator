@@ -12,20 +12,22 @@ import lombok.Data;
 @TableName("${tableName}")
 public class ${className}Entity {
 
-#foreach ($column in $columns)
-    /**
-     * $column.comments
-     */
-	#if($column.attrNameSmall == "deleteTime")
-	@TableLogic(value = "0", delval = "unix_timestamp()")
-	@TableField(select = false)
-	#end
-	#if($column.attrNameSmall == "createTime")
-	@TableField(fill = FieldFill.INSERT)
-	#end
-	#if($column.columnName == "id")
-	@TableId(value = "id", type = IdType.AUTO)
-	#end
+	#foreach ($column in $columns)
+
+		/**
+		 * $column.comments
+		 */
+		#if($column.attrNameSmall == "deleteTime")
+		@TableLogic(value = "0", delval = "unix_timestamp()")
+		@TableField(select = false)
+		#end
+		#if($column.attrNameSmall == "createTime")
+		@TableField(fill = FieldFill.INSERT)
+		#end
+		#if($column.columnName == "id")
+		@TableId(value = "id", type = IdType.AUTO)
+		#end
 	private $column.attrType $column.attrNameSmall;
-#end
+
+	#end
 }

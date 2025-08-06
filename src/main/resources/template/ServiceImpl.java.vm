@@ -7,6 +7,7 @@ import com.minzi.common.core.query.R;
 import com.minzi.common.tools.EntityAct;
 import com.minzi.common.utils.DateUtils;
 import com.minzi.common.utils.EntityUtils;
+import com.minzi.common.core.map.LambdaHashMap;
 import ${package}.common.UserContext;
 import ${package}.dao.${className}Dao;
 import ${package}.model.entity.${className}Entity;
@@ -33,7 +34,9 @@ public class ${className}ServiceImpl extends ServiceImpl<${className}Dao,${class
 
     @Override
     public Wrapper<${className}Entity> getListCondition(Map<String, Object> params) {
+        LambdaHashMap<String, Object> lambdaHashMap = new LambdaHashMap<>(params);
         LambdaQueryWrapper<${className}Entity> wrapper = new LambdaQueryWrapper<>();
+        wrapper.orderByDesc(${className}Entity::getId);
 
         return wrapper;
     }
@@ -56,6 +59,7 @@ public class ${className}ServiceImpl extends ServiceImpl<${className}Dao,${class
 
     @Override
     public Wrapper<${className}Entity> getOneCondition(Map<String, Object> params) {
+        LambdaHashMap<String, Object> lambdaHashMap = new LambdaHashMap<>(params);
         LambdaQueryWrapper<${className}Entity> wrapper = new LambdaQueryWrapper<>();
 
         wrapper.last("limit 1");
