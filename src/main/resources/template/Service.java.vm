@@ -1,6 +1,6 @@
 package ${package}.service;
 
-import com.minzi.common.service.BaseService;
+import com.minzi.common.core.service.BaseService;
 import ${package}.model.entity.${className}Entity;
 import ${package}.model.to.${classname}.${className}InfoTo;
 import ${package}.model.to.${classname}.${className}ListTo;

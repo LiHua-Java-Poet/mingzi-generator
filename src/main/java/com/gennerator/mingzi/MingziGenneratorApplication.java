@@ -7,9 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 @MapperScan("com.gennerator.mingzi.dao")
 public class MingziGenneratorApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(MingziGenneratorApplication.class, args);
     }
-
 }

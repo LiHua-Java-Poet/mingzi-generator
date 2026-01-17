@@ -7,6 +7,5 @@ public interface SysGeneratorService {
 
     List<Map<String,Object>> tableList();
 
-
     byte[] generatorCode(List<String> tableList);
 }

@@ -1,6 +1,15 @@
 package ${package}.model.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+#set($hasUserEntity = false)
+#foreach ($column in $columns)
+#if ($column.columnName == "user_id")
+#set($hasUserEntity = true)
+#end
+#end
+#if ($hasUserEntity)
+import com.minzi.common.core.model.entity.UserEntity;
+#end
 import lombok.Data;
 
 /**
@@ -13,19 +22,25 @@ import lombok.Data;
 public class ${className}Entity {
 
 #foreach ($column in $columns)
+
     /**
      * $column.comments
      */
-	#if($column.attrNameSmall == "deleteTime")
+#if($column.attrNameSmall == "deleteTime")
 	@TableLogic(value = "0", delval = "unix_timestamp()")
 	@TableField(select = false)
-	#end
-	#if($column.attrNameSmall == "createTime")
+#end
+#if($column.attrNameSmall == "createTime")
 	@TableField(fill = FieldFill.INSERT)
-	#end
-	#if($column.columnName == "id")
+#end
+#if($column.columnName == "id")
 	@TableId(value = "id", type = IdType.AUTO)
-	#end
+#end
 	private $column.attrType $column.attrNameSmall;
+#if($column.columnName == "user_id")
+
+	@TableField(select = false)
+	private UserEntity userEntity;
+#end
 #end
 }

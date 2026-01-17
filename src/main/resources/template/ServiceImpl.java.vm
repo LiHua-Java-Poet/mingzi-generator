@@ -2,12 +2,14 @@ package ${package}.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.minzi.common.core.query.R;
-import com.minzi.common.tools.EntityAct;
+import com.minzi.common.core.map.LambdaHashMap;
+import com.minzi.common.core.tools.EntityAct;
 import com.minzi.common.utils.DateUtils;
 import com.minzi.common.utils.EntityUtils;
-import ${package}.common.UserContext;
+import com.minzi.common.core.tools.UserContext;
+import com.minzi.common.utils.StringUtils;
 import ${package}.dao.${className}Dao;
 import ${package}.model.entity.${className}Entity;
 import ${package}.model.to.${classname}.${className}InfoTo;
@@ -33,13 +35,35 @@ public class ${className}ServiceImpl extends ServiceImpl<${className}Dao,${class
 
     @Override
     public Wrapper<${className}Entity> getListCondition(Map<String, Object> params) {
+        LambdaHashMap<String, Object> lambdaHashMap = new LambdaHashMap<>(params);
         LambdaQueryWrapper<${className}Entity> wrapper = new LambdaQueryWrapper<>();
+        wrapper.orderByDesc(${className}Entity::getId);
+#foreach ($column in $columns)
+    #if(
+    ($column.dataType == "varchar"
+    || $column.dataType == "char"
+    || $column.dataType == "bigint"
+    || $column.dataType == "int")
+    && $column.columnName != "create_time"
+    && $column.columnName != "update_time"
+    && $column.columnName != "delete_time"
+    )
 
-        return wrapper;
+#set($method = "eq")#if ($column.dataType == "varchar" || $column.dataType == "char")#set($method = "like")#end
+        Object $column.attrNameSmall = lambdaHashMap.get(${className}Entity::get$column.attrName);
+        wrapper.$method(!StringUtils.isEmpty($column.attrNameSmall), ${className}Entity::get$column.attrName, $column.attrNameSmall);
+#end
+#end
+return wrapper;
     }
 
     @Override
     public List<${className}ListTo> formatList(List<${className}Entity> list) {
+#foreach ($column in $columns)
+#if($column.columnName == "user_id")
+        entityAct.oneToMany(list,${className}Entity::getUserEntity);
+#end
+#end
         return list.stream().map(item -> {
             ${className}ListTo to = new ${className}ListTo();
             EntityUtils.copySameFields(item, to);
@@ -78,6 +102,23 @@ public class ${className}ServiceImpl extends ServiceImpl<${className}Dao,${class
 
     @Override
     public void delete(String[] ids) {
-        ${classname}Service.remove(new LambdaQueryWrapper<${className}Entity>().in(${className}Entity::getId,ids));
+#set($hasDelete = false)
+#foreach ($column in $columns)
+    #if ($column.columnName == "delete_time")
+        #set($hasDelete = true)
+    #end
+#end
+
+#if ($hasDelete)
+        ${classname}Service.update(
+            new LambdaUpdateWrapper<${className}Entity>()
+                    .set(${className}Entity::getDeleteTime, DateUtils.currentDateTime())
+                    .in(${className}Entity::getId, ids)
+    );
+#else
+        ${classname}Service.remove(new LambdaQueryWrapper<${className}Entity>()
+                    .in(${className}Entity::getId, ids));
+#end
     }
+
 }
