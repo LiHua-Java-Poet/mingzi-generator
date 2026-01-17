@@ -16,14 +16,12 @@ public class ${className}SaveVo implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 #foreach ($column in $columns)
-    /**
-     * $column.comments
-     */
-	#if($column.columnName != "id")
-		/**
-		 * $column.comments
-		 */
-		private $column.attrType $column.attrNameSmall;
-	#end
+#if($column.columnName != "id")
+	/**
+	 * $column.comments
+	*/
+	private $column.attrType $column.attrNameSmall;
+
+#end
 #end
 }

@@ -16,10 +16,11 @@ public class ${className}InfoTo implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 
-	#foreach ($column in $columns)
+#foreach ($column in $columns)
     /**
      * $column.comments
      */
 	private $column.attrType $column.attrNameSmall;
+
 #end
 }
