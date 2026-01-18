@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.annotation.*;
 #end
 #end
 #if ($hasUserEntity)
+import com.minzi.common.annotation.OneToOne;
 import com.minzi.common.core.model.entity.UserEntity;
 #end
 import lombok.Data;
@@ -39,6 +40,7 @@ public class ${className}Entity {
 	private $column.attrType $column.attrNameSmall;
 #if($column.columnName == "user_id")
 
+	@OneToOne(localKey = "user_id", foreignKey = "id", targetService = PlanService.class)
 	@TableField(select = false)
 	private UserEntity userEntity;
 #end

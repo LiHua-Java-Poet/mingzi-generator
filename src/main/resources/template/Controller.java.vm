@@ -3,6 +3,7 @@ package ${package}.controller;
 
 import com.minzi.common.core.query.PageUtils;
 import com.minzi.common.core.query.R;
+import io.swagger.annotations.ApiOperation;
 import ${package}.model.to.${classname}.${className}InfoTo;
 import ${package}.model.to.${classname}.${className}ListTo;
 import ${package}.model.vo.${classname}.${className}SaveVo;
@@ -58,7 +59,7 @@ public class ${className}Controller {
     @ApiOperation(value = "删除${comments}")
     @PostMapping("/delete")
     public R update(@RequestBody String[] ids) {
-            ${classname}Service.delete(vo);
+        ${classname}Service.delete(ids);
         return R.ok();
     }
 }

@@ -61,7 +61,7 @@ return wrapper;
     public List<${className}ListTo> formatList(List<${className}Entity> list) {
 #foreach ($column in $columns)
 #if($column.columnName == "user_id")
-        entityAct.oneToMany(list,${className}Entity::getUserEntity);
+        entityAct.oneToOne(list,${className}Entity::getUserEntity);
 #end
 #end
         return list.stream().map(item -> {
@@ -79,14 +79,6 @@ return wrapper;
     }
 
     @Override
-    public Wrapper<${className}Entity> getOneCondition(Map<String, Object> params) {
-        LambdaQueryWrapper<${className}Entity> wrapper = new LambdaQueryWrapper<>();
-
-        wrapper.last("limit 1");
-        return wrapper;
-    }
-
-    @Override
     public ${className}InfoTo formatOne(${className}Entity entity) {
         ${className}InfoTo to = new ${className}InfoTo();
         EntityUtils.copySameFields(entity, to);
@@ -97,6 +89,11 @@ return wrapper;
     public void update(${className}UpdateVo UpdateVo) {
         ${className}Entity entity = ${classname}Service.getById(UpdateVo.getId());
         EntityUtils.copySameFields(UpdateVo, entity);
+#foreach ($column in $columns)
+#if($column.columnName == "update_time")
+        entity.setUpdateTime(DateUtils.currentDateTime());
+#end
+#end
         ${classname}Service.updateById(entity);
     }
 
