@@ -10,6 +10,8 @@ package com.gennerator.mingzi.entity;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * 列的属性
  *
@@ -37,5 +39,7 @@ public class ColumnEntity {
 
     //auto_increment
     private String extra;
+
+    private List<EnumEntity> enums;
 
 }

@@ -3,6 +3,7 @@ package com.gennerator.mingzi.utils;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.StrUtil;
 import com.gennerator.mingzi.entity.ColumnEntity;
+import com.gennerator.mingzi.entity.EnumEntity;
 import org.apache.commons.configuration.Configuration;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -33,6 +34,7 @@ public class GenUtils {
         templates.add("template/ServiceImpl.java.vm");
         templates.add("template/Dao.java.vm");
         templates.add("template/Controller.java.vm");
+        templates.add("template/Enums.java.vm");
         return templates;
     }
 
@@ -145,6 +147,10 @@ public class GenUtils {
             return packagePath + "model" + File.separator + "vo" + File.separator + tableEntity.getClassname() + File.separator + className + "UpdateVo.java";
         }
 
+        if (template.contains("Enums.java.vm")) {
+            return packagePath + "model" + File.separator + "enums" + File.separator + className + "Enums.java";
+        }
+
         return null;
     }
 
@@ -169,7 +175,15 @@ public class GenUtils {
 
         // 设置列名备注
         if (primaryKeyMap.containsKey("columnComment")) {
-            columnEntity.setComments((String) primaryKeyMap.get("columnComment"));
+            String columnComment = (String) primaryKeyMap.get("columnComment");
+            String dataType = (String) primaryKeyMap.get("dataType");
+            columnEntity.setComments(columnComment);
+
+            // 如果是列名备注符合某一种格式的且格式是tinyint
+            if (EnumParserUtil.isValidEnumFormat(columnComment) && "tinyint".equals(dataType)){
+                List<EnumEntity> enumEntities = EnumParserUtil.parseToEnumEntity(columnComment);
+                columnEntity.setEnums(enumEntities);
+            }
         }
 
         // 设置属性名称（第一个字母大写）

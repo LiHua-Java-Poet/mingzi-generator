@@ -53,9 +53,7 @@ public class SysGeneratorServiceImpl implements SysGeneratorService {
             ColumnEntity columnEntity = GenUtils.mapToColumnEntity(primaryKeyMap);
             tableEntity.setPk(columnEntity);
 
-            List<ColumnEntity> columnEntities = columnList.stream().map(columnItem -> {
-                return GenUtils.mapToColumnEntity(columnItem);
-            }).collect(Collectors.toList());
+            List<ColumnEntity> columnEntities = columnList.stream().map(GenUtils::mapToColumnEntity).collect(Collectors.toList());
             tableEntity.setColumns(columnEntities);
 
             //循环得到其他的列属性
